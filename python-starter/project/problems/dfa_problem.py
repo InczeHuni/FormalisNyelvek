@@ -5,7 +5,6 @@ from project.problem import Problem
 class DFAProblem(Problem):
 
     def initialize_parser(self, parser: argparse.ArgumentParser):
-        """Argumentum hozzáadása a DFA ellenőrzéshez."""
         parser.add_argument(
             '--check',
             help='Vesszővel elválasztott szavak ellenőrzése az automatában',
@@ -13,11 +12,12 @@ class DFAProblem(Problem):
         )
 
     def is_chosen_problem(self, args) -> bool:
-        """Ellenőrzi, hogy a --check paraméter meg lett-e adva."""
         return args.check is not None
 
+
+
+
     def run(self, args):
-        """Futtatja a DFA szimulációt a bemeneti és kimeneti fájlok alapján."""
         input_file = args.input
         output_file = args.output
         words_to_check = [w.strip() for w in args.check.split(',')]
@@ -40,7 +40,6 @@ class DFAProblem(Problem):
                 from_state, symbol, to_state = parts
                 transitions[(from_state, symbol)] = to_state
 
-
         results = []
         for word in words_to_check:
             current_state = start_state
@@ -59,3 +58,4 @@ class DFAProblem(Problem):
                 
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write('\n'.join(results) + '\n')
+            
