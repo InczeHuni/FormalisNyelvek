@@ -27,7 +27,7 @@ LOWMEMORYKILLER_PATTERN = re.compile(r'lowmemorykiller')
 EXOPLAYER_PATTERN = re.compile(r'ExoPlayer')
 JAVA_POSITION_PATTERN = re.compile(r'[A-Za-z0-9_$.-]+\.java:')
 JAVA_FILENAME_PATTERN = re.compile(r'([A-Za-z0-9_$-]+\.java):')
-THREAD_PATTERN = re.compile(r'\bThread\b')
+THREAD_PATTERN = re.compile(r'Thread')
 PACKAGE_MANAGER_PATTERN = re.compile(r'PackageManager')
 
 
