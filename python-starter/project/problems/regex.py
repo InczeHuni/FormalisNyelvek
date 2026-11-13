@@ -5,13 +5,23 @@ from project.problem import Problem
 
 
 LOG_PATTERN = re.compile(
-    r'^([0-9-]+ [0-9:.]+) +([0-9]+) +([0-9]+) '
-    r'([IDVEFAW]) (.+?):(?: (.*))?\r?\n?$'
+    r'^((?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01]) '
+    r'(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\.[0-9]+)?) '
+    r'+([0-9]+) +([0-9]+) '
+    r'([IDVEFAW]) (.+?) *:(?: (.*))?\r?\n?$'
 )
-DATE_1015_PATTERN = re.compile(r'^10-15 [0-9:.]+$')
+DATE_1015_PATTERN = re.compile(
+    r'^10-15 (?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'
+    r'(?:\.[0-9]+)?$'
+)
 TIME_101851_PATTERN = re.compile(r'^10-15 10:18:51(?:\.[0-9]+)?$')
+TIME_ONLY_101851_PATTERN = re.compile(
+    r'^(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01]) '
+    r'10:18:51(?:\.[0-9]+)?$'
+)
 SECOND_51_PATTERN = re.compile(
-    r'^[0-9-]+ [0-9]{2}:[0-9]{2}:51(?:\.[0-9]+)?$'
+    r'^(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01]) '
+    r'(?:[01][0-9]|2[0-3]):[0-5][0-9]:51(?:\.[0-9]+)?$'
 )
 LOWMEMORYKILLER_PATTERN = re.compile(r'lowmemorykiller')
 EXOPLAYER_PATTERN = re.compile(r'ExoPlayer')
@@ -69,7 +79,7 @@ class RegexProblem(Problem):
                 counts[2] += 1
             if LOWMEMORYKILLER_PATTERN.search(tag):
                 counts[3] += 1
-            if TIME_101851_PATTERN.search(timestamp) and re.fullmatch(
+            if TIME_ONLY_101851_PATTERN.fullmatch(timestamp) and re.fullmatch(
                 r'221', record.group(2)
             ):
                 counts[4] += 1
