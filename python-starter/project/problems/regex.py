@@ -63,38 +63,30 @@ class RegexProblem(Problem):
             output_file.write('\n'.join(results))
 
     def _count_matches(self, lines):
-        counts = [0] * 10
-        for line in lines:
-            record = LOG_PATTERN.match(line)
-            if record is None:
-                continue
-
-            timestamp, _, _, level, tag, message = record.groups()
-            message = message or ''
-            if DATE_1015_PATTERN.search(timestamp):
-                counts[0] += 1
-            if TIME_101851_PATTERN.search(timestamp):
-                counts[1] += 1
-            if SECOND_51_PATTERN.search(timestamp):
-                counts[2] += 1
-            if LOWMEMORYKILLER_PATTERN.search(tag):
-                counts[3] += 1
-            if TIME_ONLY_101851_PATTERN.fullmatch(timestamp) and re.fullmatch(
-                r'221', record.group(2)
-            ):
-                counts[4] += 1
-            if re.fullmatch(r'E', level):
-                counts[5] += 1
-            if re.fullmatch(r'W', level) and PACKAGE_MANAGER_PATTERN.fullmatch(tag):
-                counts[6] += 1
-            if re.fullmatch(r'D', level) and EXOPLAYER_PATTERN.search(tag):
-                counts[7] += 1
-            if re.fullmatch(r'[EW]', level) and JAVA_POSITION_PATTERN.search(message):
-                counts[8] += 1
-            if THREAD_PATTERN.search(message):
-                counts[9] += 1
-
-        return [str(count) for count in counts]
+        patterns = [
+            re.compile(r'^10-15'),
+            re.compile(r'^10-15 10:18:51'),
+            re.compile(r'^\d{2}-\d{2} \d{2}:\d{2}:51'),
+            re.compile(
+                r'^[0-9-]+ [0-9:.]+ +\d+ +\d+ [IDVEFAW] +[^:]*lowmemorykiller[^:]*:',
+                re.IGNORECASE,
+            ),
+            re.compile(r'^[0-9-]+ 10:18:51\.\d+ +221 +'),
+            re.compile(r'^[0-9-]+ [0-9:.]+ +\d+ +\d+ E '),
+            re.compile(
+                r'^[0-9-]+ [0-9:.]+ +\d+ +\d+ W +[^:]*PackageManager[^:]*:',
+                re.IGNORECASE,
+            ),
+            re.compile(r'^[0-9-]+ [0-9:.]+ +\d+ +\d+ D .*ExoPlayer'),
+            re.compile(r'^[0-9-]+ [0-9:.]+ +\d+ +\d+ [EW] .*\.java:'),
+            re.compile(
+                r'^[0-9-]+ [0-9:.]+ +\d+ +\d+ [IDVEFAW] +[^:]+: .*Thread'
+            ),
+        ]
+        return [
+            str(sum(pattern.search(line) is not None for line in lines))
+            for pattern in patterns
+        ]
 
     def _error_sources(self, lines):
         sources = []
